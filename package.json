@@ -1,0 +1,21 @@
+{
+  "name": "xpath-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Dawid Malysa",
+  "license": "ISC",
+  "dependencies": {
+    "eslint": "^5.5.0"
+  },
+  "devDependencies": {
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.0",
+    "eslint-plugin-standard": "^4.0.0"
+  }
+}

@@ -1,0 +1,13 @@
+#hello-world {
+    width: 100vw;
+    height: 51vh;
+    text-align: center;
+    padding-top: 49vh;
+    font-size: 3rem;
+}
+
+footer {
+    text-align: center;
+    background: gray;
+    padding: 5rem 0 ;
+}
