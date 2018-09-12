@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,28 +8,31 @@
     <title>Hello</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
     <main>
-        <form action="" method="get">
-            <label for="miasta">Miasto: </label>
-            <select name="miasta" id="miast">
-                <option value="all">--Wszystkie--</option>
-            </select>
-            <label for="wojewodztwa">Województwo: </label>
-            <select name="wojewodztwa" id="wojewodztwa">
-                <option value="all">--Wszystkie--</option>
-            </select>
-            <label for="gmina">Gmina: </label>
-            <select name="gmina" id="gmina">
-                <option value="all">--Wszystkie--</option>
-            </select>
-            <label for="powiat">Powiat: </label>
-            <select name="powiat" id="powiat">
-                <option value="all">--Wszystkie--</option>
-            </select>
+        <form action="" method="get" id="main">
+            <div style="order: 99;"><label for="miasta">Miasto: </label>
+                <select name="miasta" id="miasta">
+                    <option value="all">--Wszystkie--</option>
+                </select></div>
+            <div><label for="wojewodztwa">Województwo: </label>
+                <select name="wojewodztwa" id="wojewodztwa">
+                    <option value="all">--Wszystkie--</option>
+                </select></div>
+            <div><label for="gmina">Gmina: </label>
+                <select name="gmina" id="gmina">
+                    <option value="all">--Wszystkie--</option>
+                </select></div>
+            <div><label for="powiat">Powiat: </label>
+                <select name="powiat" id="powiat">
+                    <option value="all">--Wszystkie--</option>
+                </select></div>
         </form>
+        <div id="demo"></div>
     </main>
     <footer>Copyrights: Dawid Małysa</footer>
     <script src="/javascript/index.js"></script>
 </body>
+
 </html>

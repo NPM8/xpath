@@ -31,6 +31,9 @@ http.createServer((req, res) => {
   let filePath;
   console.log('request ', req.url.split('/')[1]);
   switch (req.url.split('/')[1]) {
+    case 'api':
+      console.log('api: ', req.body);
+      break;
     default:
       filePath = './public' + req.url;
       if (filePath === './public/') {
