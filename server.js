@@ -7,6 +7,10 @@ const fs = require('fs');
 
 const path = require('path');
 
+const api = require('./routes/api');
+
+const Dom = require('xmldom').DOMParser;
+
 const mimeTypes = {
   '.html': 'text/html',
   '.xml': 'text/xml',
@@ -24,6 +28,15 @@ const mimeTypes = {
   '.otf': 'application/font-otf',
   '.svg': 'application/image/svg+xml'
 };
+let xml;
+
+fs.readFile('./public/xml/TERC_Urzedowy_2018-09-04.xml', (err, data) => {
+  if (err) {
+    throw err;
+  }
+
+  xml = new Dom().parseFromString(data);
+});
 
 const PORT = process.env.PORT || 3000;
 
@@ -32,7 +45,7 @@ http.createServer((req, res) => {
   console.log('request ', req.url.split('/')[1]);
   switch (req.url.split('/')[1]) {
     case 'api':
-      console.log('api: ', req.body);
+      api(req, res, xml);
       break;
     default:
       filePath = './public' + req.url;

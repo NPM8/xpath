@@ -10,7 +10,9 @@
   "author": "Dawid Malysa",
   "license": "ISC",
   "dependencies": {
-    "eslint": "^5.5.0"
+    "eslint": "^5.5.0",
+    "xmldom": "^0.1.27",
+    "xpath": "0.0.27"
   },
   "devDependencies": {
     "eslint-plugin-import": "^2.14.0",
