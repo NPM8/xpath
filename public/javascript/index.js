@@ -7,26 +7,52 @@
 
   const miaSelect = document.querySelector('#miasta');
 
-  function show (props) {
-    fetch(props.url, {
+  async function show (props) {
+    console.log('lol');
+    let ret = await fetch(props.url, {
       method: props.method,
-      data: JSON.stringify(props.data),
+      body: JSON.stringify(props.data),
       headers: new Headers({
         'Content-Type': 'application/json'
       })
     })
       .then(res => res.json())
-      .then(res => { return res; });
+      .then(res => { console.log(res); return res; });
+    console.log(ret);
+    return ret;
   }
 
-  wojSelect.addEventListener('change', evt => {
-    let data = show({ url: `http://${window.hostname}/api/pow`, method: 'GET', data: { value: evt.target.value } });
+  async function init () {
+    let data = await show({ url: `http://${window.location.host}/api/woj`, method: 'GET' });
+    console.log(data);
+    while (wojSelect.children.length > 1) {
+      wojSelect.removeChild(wojSelect.children[1]);
+    }
+    for (let dataKey of data) {
+      console.log('data: ', dataKey);
+      let tmp = document.createElement('option');
+      tmp.value = dataKey.value;
+      tmp.innerText = dataKey.text;
+      wojSelect.appendChild(tmp);
+    }
+    wojSelect.disabled = false;
+    powSelect.disabled = true;
+    gmiSelect.disabled = true;
+    miaSelect.disabled = true;
+  };
+
+  init();
+
+  wojSelect.addEventListener('change', async function (evt) {
+    console.log('test');
+    let data = await show({ url: `http://${window.location.host}/api/pow`, method: 'POST', data: { woj: evt.target.value } });
+    console.log(data);
     while (powSelect.children.length > 1) {
       powSelect.removeChild(powSelect.children[1]);
     }
     gmiSelect.disabled = true;
     miaSelect.disabled = true;
-    for (let dataKey in data) {
+    for (let dataKey of data) {
       let tmp = document.createElement('option');
       tmp.value = dataKey.value;
       tmp.innerText = dataKey.text;
@@ -35,14 +61,16 @@
     powSelect.disabled = false;
   });
 
-  powSelect.addEventListener('change', evt => {
-    let data = show({ url: `http://${window.hostname}/api/gmi`, method: 'GET', data: { value: evt.target.value } });
+  powSelect.addEventListener('change', async evt => {
+    console.log('test')
+    let data = await show({ url: `http://${window.location.host}/api/gmi`, method: 'POST', data: { woj: wojSelect.value, pow: evt.target.value } });
+    console.log(data);
     while (gmiSelect.children.length > 1) {
       gmiSelect.removeChild(gmiSelect.children[1]);
     }
     gmiSelect.disabled = false;
     miaSelect.disabled = true;
-    for (let dataKey in data) {
+    for (let dataKey of data) {
       let tmp = document.createElement('option');
       tmp.value = dataKey.value;
       tmp.innerText = dataKey.text;
@@ -50,13 +78,13 @@
     }
   });
 
-  gmiSelect.addEventListener('change', evt => {
-    let data = show({ url: `http://${window.hostname}/api/mia`, method: 'GET', data: { value: evt.target.value } });
+  gmiSelect.addEventListener('change', async evt => {
+    let data = await show({ url: `http://${window.location.host}/api/mia`, method: 'POST', data: { woj: wojSelect.value, pow: powSelect.value, gmi: evt.target.value } });
     while (miaSelect.children.length > 1) {
       miaSelect.removeChild(miaSelect.children[1]);
     }
     miaSelect.disabled = false;
-    for (let dataKey in data) {
+    for (let dataKey of data) {
       let tmp = document.createElement('option');
       tmp.value = dataKey.value;
       tmp.innerText = dataKey.text;
