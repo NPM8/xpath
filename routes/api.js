@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const xpath = require('xpath');
+const libxmljs = require('libxmljs');
 // const { parse } = require('querystring');
 // const fs = require('fs');
 
@@ -24,20 +24,27 @@ module.exports = function api (req, res, xmlDom, woj, reqArr) {
           } else {
             let response = [];
             let path = `//row[POW[node()]][WOJ=${body.woj}][GMI[not(node())]]`;
-            if (xpath.evaluate) {
-              // eslint-disable-next-line no-undef
-              let nodes = xpath.evaluate(path, xmlDom, null, xpath.XPathResult.ANY_TYPE, null);
-              let result = nodes.iterateNext();
-              while (result) {
-                let tmp = {};
-                tmp.value = result.childNodes[1].childNodes[0].nodeValue;
-                tmp.text = result.childNodes[9].childNodes[0].nodeValue;
-                response.push(tmp);
-                result = nodes.iterateNext();
-              }
-              let toSend = JSON.stringify(response);
-              res.end(toSend, 'utf-8');
-              reqArr.pow.push({ string: JSON.stringify(body), res: toSend });
+            // if (xpath.evaluate) {
+            //   // eslint-disable-next-line no-undef
+            //   let nodes = xpath.evaluate(path, xmlDom[0], null, xpath.XPathResult.ANY_TYPE, null);
+            //   let result = nodes.iterateNext();
+            //   while (result) {
+            //     let tmp = {};
+            //     tmp.value = result.childNodes[1].childNodes[0].nodeValue;
+            //     tmp.text = result.childNodes[9].childNodes[0].nodeValue;
+            //     response.push(tmp);
+            //     result = nodes.iterateNext();
+            //   }
+            //   let toSend = JSON.stringify(response);
+            //   res.end(toSend, 'utf-8');
+            //   reqArr.pow.push({ string: JSON.stringify(body), res: toSend });
+            // }
+            let obj = xml[0].find(path);
+            for (let value of obj) {
+              let tmp = {};
+              tmp.value = value.get('POW').text();
+              tmp.text = value.get('NAZWA').text();
+              response.push(tmp);
             }
           }
         });
@@ -61,7 +68,7 @@ module.exports = function api (req, res, xmlDom, woj, reqArr) {
             let path = `//row[POW=${body.pow}][WOJ=${body.woj}][GMI[node()]][RODZ<=3]`;
             if (xpath.evaluate) {
               // eslint-disable-next-line no-undef
-              let nodes = xpath.evaluate(path, xmlDom, null, xpath.XPathResult.ANY_TYPE, null);
+              let nodes = xpath.evaluate(path, xmlDom[0], null, xpath.XPathResult.ANY_TYPE, null);
               let result = nodes.iterateNext();
               while (result) {
                 let tmp = {};
@@ -93,15 +100,15 @@ module.exports = function api (req, res, xmlDom, woj, reqArr) {
             res.end(JSON.stringify(tmpRes.res), 'utf-8');
           } else {
             let response = [];
-            let path = `//row[POW=${body.pow}][WOJ=${body.woj}][GMI=${body.gmi}][RODZ=4]`;
+            let path = `//row[POW=${body.pow}][WOJ=${body.woj}][GMI=${body.gmi}]`;
             if (xpath.evaluate) {
               // eslint-disable-next-line no-undef
-              let nodes = xpath.evaluate(path, xmlDom, null, xpath.XPathResult.ANY_TYPE, null);
+              let nodes = xpath.evaluate(path, xmlDom[1], null, xpath.XPathResult.ANY_TYPE, null);
               let result = nodes.iterateNext();
               while (result) {
                 let tmp = {};
-                tmp.value = result.childNodes[9].childNodes[0].nodeValue;
-                tmp.text = `${result.childNodes[9].childNodes[0].nodeValue}`;
+                tmp.value = result.childNodes[13].childNodes[0].nodeValue;
+                tmp.text = `${result.childNodes[15].childNodes[0].nodeValue}`;
                 response.push(tmp);
                 result = nodes.iterateNext();
               }

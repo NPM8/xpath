@@ -13,6 +13,8 @@ const Dom = require('xmldom').DOMParser;
 
 const xpath = require('xpath');
 
+const libxml = require('libxmljs');
+
 const mimeTypes = {
   '.html': 'text/html',
   '.xml': 'text/xml',
@@ -30,30 +32,47 @@ const mimeTypes = {
   '.otf': 'application/font-otf',
   '.svg': 'application/image/svg+xml'
 };
-let xml;
+let xml = [];
 
 const wojArr = [];
 
-fs.readFile('./public/xml/TERC_Urzedowy_2018-09-04.xml', (err, data) => {
-  if (err) {
-    throw err;
-  }
-
-  xml = new Dom().parseFromString(data.toString());
-  let path = '//row[NAZWA_DOD=\'województwo\']';
-  if (xpath.evaluate) {
-    // eslint-disable-next-line no-undef
-    let nodes = xpath.evaluate(path, xml, null, xpath.XPathResult.ANY_TYPE, null);
-    let result = nodes.iterateNext();
-    while (result) {
-      let tmp = {};
-      tmp.value = result.childNodes[1].childNodes[0].nodeValue;
-      tmp.text = result.childNodes[9].childNodes[0].nodeValue;
-      wojArr.push(tmp);
-      result = nodes.iterateNext();
+function addXML (url) {
+  fs.readFile(url, (err, data) => {
+    if (err) {
+      throw err;
     }
-  }
-});
+    let dataTmp = data.toString().replace(/\r?\n|\r| {2,}/g, '');
+    xml.push(libxml.parseXmlString(dataTmp));
+
+    // if (xml.length === 1) {
+    //   let pathXML = '//row[NAZWA_DOD=\'województwo\']';
+    //   if (xpath.evaluate) {
+    //     // eslint-disable-next-line no-undef
+    //     let nodes = xpath.evaluate(pathXML, xml[0], null, xpath.XPathResult.ANY_TYPE, null);
+    //     let result = nodes.iterateNext();
+    //     while (result) {
+    //       let tmp = {};
+    //       tmp.value = result.childNodes[1].childNodes[0].nodeValue;
+    //       tmp.text = result.childNodes[9].childNodes[0].nodeValue;
+    //       wojArr.push(tmp);
+    //       result = nodes.iterateNext();
+    //     }
+    //   }
+    // }
+    if (xml.length === 1) {
+      let obj = xml[0].find('//row[NAZWA_DOD=\'województwo\']');
+
+      for (let value of obj) {
+        let tmp = {};
+        tmp.value = value.get('WOJ').text();
+        tmp.text = value.get('NAZWA').text();
+        wojArr.push(tmp);
+      }
+    }
+  });
+}
+addXML('./public/xml/TERC_Urzedowy_2018-09-04.xml');
+addXML('./public/xml/SIMC_Urzedowy_2018-09-04.xml');
 
 let reqArr = {
   pow: [],
