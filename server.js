@@ -44,21 +44,6 @@ function addXML (url) {
     let dataTmp = data.toString().replace(/\r?\n|\r| {2,}/g, '');
     xml.push(libxml.parseXmlString(dataTmp));
 
-    // if (xml.length === 1) {
-    //   let pathXML = '//row[NAZWA_DOD=\'województwo\']';
-    //   if (xpath.evaluate) {
-    //     // eslint-disable-next-line no-undef
-    //     let nodes = xpath.evaluate(pathXML, xml[0], null, xpath.XPathResult.ANY_TYPE, null);
-    //     let result = nodes.iterateNext();
-    //     while (result) {
-    //       let tmp = {};
-    //       tmp.value = result.childNodes[1].childNodes[0].nodeValue;
-    //       tmp.text = result.childNodes[9].childNodes[0].nodeValue;
-    //       wojArr.push(tmp);
-    //       result = nodes.iterateNext();
-    //     }
-    //   }
-    // }
     if (xml.length === 1) {
       let obj = xml[0].find('//row[NAZWA_DOD=\'województwo\']');
 
