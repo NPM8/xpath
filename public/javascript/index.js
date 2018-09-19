@@ -1,4 +1,7 @@
 (function () {
+  String.prototype.toFirstUpperCase = function () {
+    return this.toString()[0].toUpperCase() + this.toString().substring(1).toLowerCase();
+  }
   const wojSelect = document.querySelector('#wojewodztwa');
 
   const powSelect = document.querySelector('#powiat');
@@ -90,6 +93,11 @@
       tmp.innerText = dataKey.text;
       miaSelect.appendChild(tmp);
     }
+  });
+
+  miaSelect.addEventListener('change', async evt => {
+    // console.log(evt);
+    console.log(`${wojSelect.options[wojSelect.selectedIndex].innerHTML.toFirstUpperCase()} - ${powSelect.options[powSelect.selectedIndex].innerHTML} - ${gmiSelect.options[gmiSelect.selectedIndex].innerHTML} - ${evt.target.value}`) //${} - ${} - ${} - ${evt.target.value}
   });
 })();
 

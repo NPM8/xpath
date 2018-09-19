@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 const libxmljs = require('libxmljs');
-// const { parse } = require('querystring');
-// const fs = require('fs');
+
+const { request } = require('http');
+
+const qs = require('querystring');
 
 module.exports = function api (req, res, xmlDom, woj, reqArr) {
   switch (req.url.split('/')[2]) {
@@ -24,28 +26,16 @@ module.exports = function api (req, res, xmlDom, woj, reqArr) {
           } else {
             let response = [];
             let path = `//row[POW[node()]][WOJ=${body.woj}][GMI[not(node())]]`;
-            // if (xpath.evaluate) {
-            //   // eslint-disable-next-line no-undef
-            //   let nodes = xpath.evaluate(path, xmlDom[0], null, xpath.XPathResult.ANY_TYPE, null);
-            //   let result = nodes.iterateNext();
-            //   while (result) {
-            //     let tmp = {};
-            //     tmp.value = result.childNodes[1].childNodes[0].nodeValue;
-            //     tmp.text = result.childNodes[9].childNodes[0].nodeValue;
-            //     response.push(tmp);
-            //     result = nodes.iterateNext();
-            //   }
-            //   let toSend = JSON.stringify(response);
-            //   res.end(toSend, 'utf-8');
-            //   reqArr.pow.push({ string: JSON.stringify(body), res: toSend });
-            // }
-            let obj = xml[0].find(path);
+            let obj = xmlDom[0].find(path);
             for (let value of obj) {
               let tmp = {};
               tmp.value = value.get('POW').text();
               tmp.text = value.get('NAZWA').text();
               response.push(tmp);
             }
+            let toSend = JSON.stringify(response);
+            res.end(toSend, 'utf-8');
+            reqArr.pow.push({ string: JSON.stringify(body), res: toSend });
           }
         });
       }
@@ -66,21 +56,16 @@ module.exports = function api (req, res, xmlDom, woj, reqArr) {
           } else {
             let response = [];
             let path = `//row[POW=${body.pow}][WOJ=${body.woj}][GMI[node()]][RODZ<=3]`;
-            if (xpath.evaluate) {
-              // eslint-disable-next-line no-undef
-              let nodes = xpath.evaluate(path, xmlDom[0], null, xpath.XPathResult.ANY_TYPE, null);
-              let result = nodes.iterateNext();
-              while (result) {
-                let tmp = {};
-                tmp.value = result.childNodes[3].childNodes[0].nodeValue;
-                tmp.text = `${result.childNodes[9].childNodes[0].nodeValue} - ${result.childNodes[11].childNodes[0].nodeValue.split(' ')[1]}`;
-                response.push(tmp);
-                result = nodes.iterateNext();
-              }
-              let toSend = JSON.stringify(response);
-              res.end(toSend, 'utf-8');
-              reqArr.gmi.push({ string: JSON.stringify(body), res: toSend });
+            let obj = xmlDom[0].find(path);
+            for (let value of obj) {
+              let tmp = {};
+              tmp.value = value.get('GMI').text();
+              tmp.text = `${value.get('NAZWA').text()} (${value.get('NAZWA_DOD').text()})`;
+              response.push(tmp);
             }
+            let toSend = JSON.stringify(response);
+            res.end(toSend, 'utf-8');
+            reqArr.pow.push({ string: JSON.stringify(body), res: toSend });
           }
         });
       }
@@ -101,39 +86,32 @@ module.exports = function api (req, res, xmlDom, woj, reqArr) {
           } else {
             let response = [];
             let path = `//row[POW=${body.pow}][WOJ=${body.woj}][GMI=${body.gmi}]`;
-            if (xpath.evaluate) {
-              // eslint-disable-next-line no-undef
-              let nodes = xpath.evaluate(path, xmlDom[1], null, xpath.XPathResult.ANY_TYPE, null);
-              let result = nodes.iterateNext();
-              while (result) {
-                let tmp = {};
-                tmp.value = result.childNodes[13].childNodes[0].nodeValue;
-                tmp.text = `${result.childNodes[15].childNodes[0].nodeValue}`;
-                response.push(tmp);
-                result = nodes.iterateNext();
-              }
-              let toSend = JSON.stringify(response);
-              res.end(toSend, 'utf-8');
-              reqArr.mia.push({ string: JSON.stringify(body), res: toSend });
+            let obj = xmlDom[1].find(path);
+            for (let value of obj) {
+              let tmp = {};
+              tmp.text = tmp.value = value.get('NAZWA').text();
+              response.push(tmp);
             }
+            let toSend = JSON.stringify(response);
+            res.end(toSend, 'utf-8');
+            reqArr.pow.push({ string: JSON.stringify(body), res: toSend });
           }
         });
       }
       break;
     case 'kod':
+      if (req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => {
+          body += chunk.toString();
+        });
+        req.on('end', async () => {
+          console.log(JSON.parse(body));
+          body = JSON.parse(body);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+
+        });
+      }
       break;
-  }
-  let node;
-  let result = xpath.evaluate(
-    '/book/title', // xpathExpression
-    xmlDom, // contextNode
-    null, // namespaceResolver
-    xpath.XPathResult.ANY_TYPE, // resultType
-    null // result
-  );
-  node = result.iterateNext();
-  while (node) {
-    console.log(node);
-    node = result.iterateNext();
   }
 };
