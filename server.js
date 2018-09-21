@@ -9,10 +9,6 @@ const path = require('path');
 
 const api = require('./routes/api');
 
-const Dom = require('xmldom').DOMParser;
-
-const xpath = require('xpath');
-
 const libxml = require('libxmljs');
 
 const mimeTypes = {
