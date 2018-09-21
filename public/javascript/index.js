@@ -44,7 +44,7 @@
     arrow.style.display = 'none';
     count.style.display = 'none';
     while (root.children.length > 4) {
-      wojSelect.removeChild(wojSelect.children[4]);
+      root.removeChild(root.children[4]);
     }
   }
 
